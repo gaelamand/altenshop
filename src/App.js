@@ -1,23 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import SideNav from "./components/SideNav";
+// import { Route, Routes } from "react-router-dom";
 
-function App() {
+const App = () => {
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <div className="bg-red-500 text-white p-4">Hello Tailwind CSS!</div>
-
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <SideNav />
+        {/* <Navbar />
+        <Menu />
+        <Container /> */}
     </div>
+
+
   );
 }
 
