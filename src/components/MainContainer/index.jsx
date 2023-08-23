@@ -92,12 +92,12 @@ const MainContainer = () => {
                                     <div className="mb-2">{product.inventoryStatus}</div>
                                     <div className="">{product.name}</div>
                                     <div className="">{product.description}</div>
-                                    <div className="mb-6">Stars:
+                                    <div className="mb-6">
                                         {[...Array(5)].map((_, index) => (
                                             <FontAwesomeIcon
                                                 key={index}
                                                 icon={faStar}
-                                                className={`text-white border-2  ${index < product.rating ? 'text-blue-800' : 'white'}`}
+                                                className={`border border-gray-300 rounded ${index < product.rating ? 'text-blue-800' : 'text-white'}`}
                                             />
                                         ))}
                                     </div>
