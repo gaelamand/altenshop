@@ -10,7 +10,7 @@ const App = () => {
   return (
     <div className="flex">
       <SideNav />
-      <div className="flex-grow">
+      <div className="flex-grow bg-slate-200">
         <Navbar />
         <Menu />
         <MainContainer />

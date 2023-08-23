@@ -5,7 +5,7 @@ import { faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
   return (
-    <nav className="bg-white h-16 flex items-center justify-between px-6 text-black">
+    <nav className=" h-16 flex items-center justify-between px-6 text-black">
       <div className="flex items-center ml-auto">
         <button className="mr-2">
           <FontAwesomeIcon icon={faToggleOn} className="text-3xl mr-4" />
