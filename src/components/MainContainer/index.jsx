@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
-import { faTag, faStar, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faTag, faStar, faSearch, faList, faTh } from '@fortawesome/free-solid-svg-icons';
 import products from '../../assets/products.json';
 
 const MainContainer = () => {
@@ -37,6 +37,8 @@ const MainContainer = () => {
     });
 
 
+    const [viewMode, setViewMode] = useState('grid'); // État pour le mode d'affichage
+
 
     // const [products, setProducts] = useState([]);
 
@@ -66,46 +68,63 @@ const MainContainer = () => {
                     </select>
 
                     <div className="relative ml-4">
-    <FontAwesomeIcon
-        icon={faSearch}
-        className="absolute text-gray-400 left-2 top-1/2 transform -translate-y-1/2"
-    />
-    <input
-        type="text"
-        placeholder="Search..."
-        className="border rounded p-1 pl-8"
-    />
-</div>
+                        <FontAwesomeIcon
+                            icon={faSearch}
+                            className="absolute text-gray-400 left-2 top-1/2 transform -translate-y-1/2"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            className="border rounded p-1 pl-8"
+                        />
+                    </div>
+                    <button
+                        className="bg-gray-200 hover:bg-gray-300 rounded p-2 ml-4"
+                        onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+                    >
+                        <FontAwesomeIcon icon={viewMode === 'grid' ? faList : faTh} className="text-xl" />
+                    </button>
 
                 </div>
                 <div className="border-b border-gray-300 my-4"></div>
-                <div className="grid grid-cols-3 gap-4 w-full mt-6">
+                <div className={`grid ${viewMode === 'grid' ? 'grid-cols-3 gap-4' : ''} w-full`}>
                     {sortedProducts
                         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                         .map((product) => (
-                            <div key={product.id} className="bg-gray-50 p-4 rounded-lg shadow-md w-full">
-                                <div className="flex flex-col text-center">
-                                    <div className="flex justify-center">
-                                        <FontAwesomeIcon icon={faTag} className="text-2xl" />
-                                        <div className="ml-1">{product.category}</div>
-                                    </div>
-                                    <div className="mb-2">{product.inventoryStatus}</div>
-                                    <div className="">{product.name}</div>
-                                    <div className="">{product.description}</div>
-                                    <div className="mb-6">
-                                        {[...Array(5)].map((_, index) => (
-                                            <FontAwesomeIcon
-                                                key={index}
-                                                icon={faStar}
-                                                className={`border border-gray-300 rounded ${index < product.rating ? 'text-blue-800' : 'text-white'}`}
-                                            />
-                                        ))}
-                                    </div>
-                                    <div className="mb-2 flex justify-center">
-                                        ${product.price}
-                                        <button className="ml-2 bg-blue-800 text-white rounded px-3 py-1">
-                                            <FontAwesomeIcon icon={faShoppingCart} className="text-lg" />
-                                        </button>
+                            <div
+                                key={product.id}
+                                className={`bg-gray-50 p-4 rounded-lg shadow-md w-full ${viewMode === 'list' ? 'mb-2' : ''
+                                    }`}
+                                style={{ display: viewMode === 'list' ? 'flex' : 'block' }}
+                            >
+                                <div className="text-center">
+                                    <div className={`flex ${viewMode === 'list' ? 'flex-row gap-6' : 'flex-col'}`}>
+                                        <div className="flex justify-center">
+                                            <FontAwesomeIcon icon={faTag} className="text-2xl" />
+                                            <div className="ml-1">{product.category}</div>
+                                        </div>
+                                        <div className="mb-2">{product.inventoryStatus}</div>
+                                        <div className="">{product.name}</div>
+                                        <div className="">{product.description}</div>
+                                        <div className={`mb-6 ${viewMode === 'list' ? 'flex' : 'block'}`}>
+                                            {[...Array(5)].map((_, index) => (
+                                                <FontAwesomeIcon
+                                                    key={index}
+                                                    icon={faStar}
+                                                    className={`border border-gray-300 rounded ${index < product.rating ? 'text-blue-800' : 'text-white'
+                                                        } ${viewMode === 'list' ? 'mr-2' : 'mx-1'}`}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div
+                                            className={`mb-2 ${viewMode === 'list' ? 'flex' : 'flex justify-center'
+                                                }`}
+                                        >
+                                            ${product.price}
+                                            <button className="ml-2 bg-blue-800 text-white rounded px-3 py-1">
+                                                <FontAwesomeIcon icon={faShoppingCart} className="text-lg" />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
