@@ -12,7 +12,7 @@ const Menu = () => {
 
   // Capitaliser la première lettre du premier segment
   const capitalizedFirstSegment =
-    firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1);
+    firstSegment?.charAt(0).toUpperCase() + firstSegment?.slice(1);
 
   return (
     <div className={`h-10 shadow-md flex items-center ${isDarkMode ? 'bg-slate-600' : 'bg-white'}`}>

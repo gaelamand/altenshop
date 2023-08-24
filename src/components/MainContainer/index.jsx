@@ -57,7 +57,7 @@ const MainContainer = () => {
     return (
         <div className={`flex flex-col items-center justify-center pt-2 ${isDarkMode ? 'bg-slate-400' : 'bg-slate-200'}`}>
             <div className={`p-4 rounded-lg shadow-md w-3/4 mb-4 ${isDarkMode ? 'bg-slate-600' : 'bg-white'}`}>
-                <div className="flex items-center">
+                <div className="flex items-center h-6">
                     <select
                         className="border rounded p-1"
                         onChange={(e) => sortProducts(e.target.value)} // Appel de la fonction de tri
@@ -94,7 +94,7 @@ const MainContainer = () => {
                         .map((product) => (
                             <div
                                 key={product.id}
-                                className={`bg-gray-50 p-4 rounded-lg shadow-md w-full ${viewMode === 'list' ? 'mb-2' : ''
+                                className={`bg-gray-50 p-3 rounded-lg shadow-md w-full ${viewMode === 'list' ? 'mb-2' : ''
                                     }`}
                                 style={{ display: viewMode === 'list' ? 'flex' : 'block' }}
                             >
