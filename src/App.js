@@ -1,22 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import SideNav from "./components/SideNav";
+import Navbar from "./components/Navbar";
+import Menu from "./components/Menu"
+import MainContainer from "./components/MainContainer";
+import Admin from "./components/Admin";
+import { Route, Routes } from "react-router-dom";
 
-function App() {
+const App = () => {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <div className="bg-red-500 text-white p-4">Hello Tailwind CSS!</div>
+    <div className="flex">
+      <SideNav />
+      <div className="flex-grow bg-slate-200">
+        <Navbar />
+        <Menu />
+        <Routes>
 
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+          <Route
+            path="/Products"
+            element={<MainContainer />}
+            />
+
+          <Route
+            path="/Admin/Products"
+            element={<Admin />}
+            />
+
+        </Routes>
+        
+      </div>
     </div>
   );
 }
