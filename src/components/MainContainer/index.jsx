@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { faTag, faStar, faSearch, faList, faTh } from '@fortawesome/free-solid-svg-icons';
 import products from '../../assets/products.json';
+import { useDarkMode } from '../DarkMode/DarkModeContext';
 
 const MainContainer = () => {
 
@@ -39,7 +40,7 @@ const MainContainer = () => {
 
     const [viewMode, setViewMode] = useState('grid'); // État pour le mode d'affichage
 
-
+    const { isDarkMode, toggleDarkMode } = useDarkMode();
     // const [products, setProducts] = useState([]);
 
     // useEffect(() => {
@@ -54,8 +55,8 @@ const MainContainer = () => {
     // }, []);
 
     return (
-        <div className="flex flex-col items-center justify-center mt-2">
-            <div className="bg-white p-4 rounded-lg shadow-md w-3/4 mb-4">
+        <div className={`flex flex-col items-center justify-center pt-2 ${isDarkMode ? 'bg-slate-400' : 'bg-slate-200'}`}>
+            <div className={`p-4 rounded-lg shadow-md w-3/4 mb-4 ${isDarkMode ? 'bg-slate-600' : 'bg-white'}`}>
                 <div className="flex items-center">
                     <select
                         className="border rounded p-1"

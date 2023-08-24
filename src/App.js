@@ -3,6 +3,7 @@ import SideNav from "./components/SideNav";
 import Navbar from "./components/Navbar";
 import Menu from "./components/Menu"
 import MainContainer from "./components/MainContainer";
+import Admin from "./components/Admin";
 import { Route, Routes } from "react-router-dom";
 
 const App = () => {
@@ -14,10 +15,17 @@ const App = () => {
         <Navbar />
         <Menu />
         <Routes>
+
           <Route
-            path="/products"
+            path="/Products"
             element={<MainContainer />}
             />
+
+          <Route
+            path="/Admin/Products"
+            element={<Admin />}
+            />
+
         </Routes>
         
       </div>

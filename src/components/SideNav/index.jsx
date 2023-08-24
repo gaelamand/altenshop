@@ -16,13 +16,15 @@ const SideNav = () => {
           Alten Shop
         </div>
       </div>
+
       <div className="text-white text-lg mb-4 hover:text-xl hover:text-red-500 hover:cursor-pointer transition duration-300 ease-in-out">
-  <FontAwesomeIcon icon={faShoppingCart} className="mr-2" />
-  <Link to="/products" className="link-hover">Products</Link>
-</div>
+        <FontAwesomeIcon icon={faShoppingCart} className="mr-2" />
+        <Link to="/products" className="link-hover">Products</Link>
+      </div>
+
       <div className="text-white text-lg mb-4 hover:text-xl hover:text-red-500 hover:cursor-pointer transition duration-300 ease-in-out">
-      <FontAwesomeIcon icon={faCog} className="mr-2" />
-        Admin
+        <FontAwesomeIcon icon={faCog} className="mr-2" />
+        <Link to="/admin/products" className="link-hover">Admin</Link>
       </div>
     </aside>
   );
