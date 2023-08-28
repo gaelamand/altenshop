@@ -5,13 +5,16 @@ import Menu from "./components/Menu"
 import MainContainer from "./components/MainContainer";
 import Admin from "./components/Admin";
 import { Route, Routes } from "react-router-dom";
+import { useDarkMode } from './components/DarkMode/DarkModeContext';
 
 const App = () => {
+
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   return (
     <div className="flex">
       <SideNav />
-      <div className="flex-grow bg-slate-200">
+      <div className={`flex-grow ${isDarkMode ? 'bg-slate-400' : 'bg-slate-200'}`}>
         <Navbar />
         <Menu />
         <Routes>

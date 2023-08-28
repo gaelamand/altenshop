@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { faTag, faStar, faSearch, faList, faTh } from '@fortawesome/free-solid-svg-icons';
-import products from '../../assets/products.json';
 import { useDarkMode } from '../DarkMode/DarkModeContext';
+import { createClient } from '@supabase/supabase-js';
 
 const MainContainer = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
-    const [sortKey, setSortKey] = useState(''); // Ajout de l'état pour la clé de tri
+    const [sortKey, setSortKey] = useState('');
+    const [supabaseProducts, setSupabaseProducts] = useState([]);
 
-    const totalItems = products.data.length;
+    const totalItems = supabaseProducts.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
@@ -19,17 +20,13 @@ const MainContainer = () => {
     const startIndex = (currentPage - 1) * itemsPerPage + 1;
     const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
-    // Fonction de tri
     const sortProducts = (key) => {
         setSortKey(key);
     };
 
-    // Fonction pour trier les produits en fonction de la clé sélectionnée
-    const sortedProducts = [...products.data].sort((a, b) => {
+    const sortedProducts = [...supabaseProducts].sort((a, b) => {
         if (sortKey === 'category') {
             return a.category.localeCompare(b.category);
-        } else if (sortKey === 'inventoryStatus') {
-            return a.inventoryStatus.localeCompare(b.inventoryStatus);
         } else if (sortKey === 'rating') {
             return b.rating - a.rating;
         } else {
@@ -37,22 +34,25 @@ const MainContainer = () => {
         }
     });
 
-
-    const [viewMode, setViewMode] = useState('grid'); // État pour le mode d'affichage
-
+    const [viewMode, setViewMode] = useState('grid');
     const { isDarkMode, toggleDarkMode } = useDarkMode();
-    // const [products, setProducts] = useState([]);
 
-    // useEffect(() => {
-    //   // Modifiez l'URL de l'API + modifier le map qui permet de boucler
-    //   axios.get('https://votre-api.com/products')
-    //     .then(response => {
-    //       setProducts(response.data);
-    //     })
-    //     .catch(error => {
-    //       console.error('Erreur lors de la récupération des produits :', error);
-    //     });
-    // }, []);
+    useEffect(() => {
+        const supabase = createClient(
+            'https://ilgqxorbrnkeexubdppj.supabase.co', // Remplacez par votre URL Supabase
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZ3F4b3Jicm5rZWV4dWJkcHBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTMyMDkzMDcsImV4cCI6MjAwODc4NTMwN30.eRe-Avwe1vQPLuBISuJxQk-ER4QwfdLgovUrOZ420j8' // Remplacez par votre clé d'API Supabase
+        );
+
+        supabase
+            .from('products') // Remplacez 'products' par le nom de votre table dans Supabase
+            .select('*')
+            .then(response => {
+                setSupabaseProducts(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching products:', error);
+            });
+    }, []);
 
     return (
         <div className={`flex flex-col items-center justify-center pt-2 ${isDarkMode ? 'bg-slate-400' : 'bg-slate-200'}`}>
