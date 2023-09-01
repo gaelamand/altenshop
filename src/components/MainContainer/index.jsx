@@ -2,31 +2,52 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { faTag, faStar, faSearch, faList, faTh } from '@fortawesome/free-solid-svg-icons';
+// import products from '../../public/products.json';
 import { useDarkMode } from '../DarkMode/DarkModeContext';
-import { createClient } from '@supabase/supabase-js';
+
 
 const MainContainer = () => {
-
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
     const [sortKey, setSortKey] = useState('');
-    const [supabaseProducts, setSupabaseProducts] = useState([]);
+    const [products, setProducts] = useState([]);
 
-    const totalItems = supabaseProducts.length;
+    const getData = () => {
+        var requestOptions = {
+            method: "GET",
+            redirect: "follow",
+        };
+
+        fetch("./products.json", requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+                console.log('Received products:', result);
+                setProducts(result.data);
+            })
+            .catch((error) => console.error('Error fetching products:', error));
+    };
+
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const totalItems = products.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
-
     const startIndex = (currentPage - 1) * itemsPerPage + 1;
     const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
-
+    // Fonction de tri
     const sortProducts = (key) => {
         setSortKey(key);
     };
 
-    const sortedProducts = [...supabaseProducts].sort((a, b) => {
+
+
+    const sortedProducts = [...products].sort((a, b) => {
         if (sortKey === 'category') {
             return a.category.localeCompare(b.category);
+        } else if (sortKey === 'inventoryStatus') {
+            return a.inventoryStatus.localeCompare(b.inventoryStatus);
         } else if (sortKey === 'rating') {
             return b.rating - a.rating;
         } else {
@@ -34,25 +55,8 @@ const MainContainer = () => {
         }
     });
 
-    const [viewMode, setViewMode] = useState('grid');
+    const [viewMode, setViewMode] = useState('grid'); 
     const { isDarkMode, toggleDarkMode } = useDarkMode();
-
-    useEffect(() => {
-        const supabase = createClient(
-            'https://ilgqxorbrnkeexubdppj.supabase.co', // Remplacez par votre URL Supabase
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZ3F4b3Jicm5rZWV4dWJkcHBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTMyMDkzMDcsImV4cCI6MjAwODc4NTMwN30.eRe-Avwe1vQPLuBISuJxQk-ER4QwfdLgovUrOZ420j8' // Remplacez par votre clé d'API Supabase
-        );
-
-        supabase
-            .from('products') // Remplacez 'products' par le nom de votre table dans Supabase
-            .select('*')
-            .then(response => {
-                setSupabaseProducts(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching products:', error);
-            });
-    }, []);
 
     return (
         <div className={`flex flex-col items-center justify-center pt-2 ${isDarkMode ? 'bg-slate-400' : 'bg-slate-200'}`}>
@@ -60,14 +64,13 @@ const MainContainer = () => {
                 <div className="flex items-center h-6">
                     <select
                         className="border rounded p-1"
-                        onChange={(e) => sortProducts(e.target.value)} // Appel de la fonction de tri
+                        onChange={(e) => sortProducts(e.target.value)} 
                     >
                         <option value="">Sort By:</option>
                         <option value="category">Category</option>
                         <option value="inventoryStatus">Inventory Status</option>
                         <option value="rating">Rating</option>
                     </select>
-
                     <div className="relative ml-4">
                         <FontAwesomeIcon
                             icon={faSearch}
@@ -85,7 +88,6 @@ const MainContainer = () => {
                     >
                         <FontAwesomeIcon icon={viewMode === 'grid' ? faList : faTh} className="text-xl" />
                     </button>
-
                 </div>
                 <div className="border-b border-gray-300 my-4"></div>
                 <div className={`grid ${viewMode === 'grid' ? 'grid-cols-3 gap-4' : ''} w-full`}>
@@ -132,36 +134,35 @@ const MainContainer = () => {
                         ))}
                 </div>
                 <div className="flex justify-center mt-4">
-                    <button
-                        className="bg-gray-200 hover:bg-gray-300 rounded px-3 py-1 mx-1"
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        Précédent
-                    </button>
-                    {pageNumbers.map((pageNumber) => (
                         <button
-                            key={pageNumber}
-                            className={`bg-gray-200 hover:bg-gray-300 rounded px-3 py-1 mx-1 ${currentPage === pageNumber ? 'bg-gray-400' : ''}`}
-                            onClick={() => setCurrentPage(pageNumber)}
+                            className="bg-gray-200 hover:bg-gray-300 rounded px-3 py-1 mx-1"
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                            disabled={currentPage === 1}
                         >
-                            {pageNumber}
+                            Précédent
                         </button>
-                    ))}
-                    <button
-                        className="bg-gray-200 hover:bg-gray-300 rounded px-3 py-1 mx-1"
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                    >
-                        Suivant
-                    </button>
-                </div>
-                <div className="mt-4 text-center text-gray-600">
-                    Showing {startIndex} to {endIndex} of {totalItems} entries
-                </div>
+                        {pageNumbers.map((pageNumber) => (
+                            <button
+                                key={pageNumber}
+                                className={`bg-gray-200 hover:bg-gray-300 rounded px-3 py-1 mx-1 ${currentPage === pageNumber ? 'bg-gray-400' : ''}`}
+                                onClick={() => setCurrentPage(pageNumber)}
+                            >
+                                {pageNumber}
+                            </button>
+                        ))}
+                        <button
+                            className="bg-gray-200 hover:bg-gray-300 rounded px-3 py-1 mx-1"
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            Suivant
+                        </button>
+                    </div>
+                    <div className="mt-4 text-center text-gray-600">
+                        Showing {startIndex} to {endIndex} of {totalItems} entries
+                    </div>
             </div>
         </div>
     );
 };
-
 export default MainContainer;
