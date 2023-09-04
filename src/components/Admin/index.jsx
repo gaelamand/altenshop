@@ -12,6 +12,9 @@ const Admin = () => {
   const [products, setProducts] = useState([]);
   // const [deletedProducts, setDeletedProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [editingRows, setEditingRows] = useState([]);
+const [editedValues, setEditedValues] = useState({});
+
 
   const getData = () => {
     var requestOptions = {
@@ -36,14 +39,11 @@ const Admin = () => {
     console.log('Delete button clicked for product ID:', productId);
 
     try {
-      // Simulate the DELETE operation by updating the local JSON data
       const response = await fetch('../products.json');
       const data = await response.json();
 
-      // Filter out the product with the specified ID
       const updatedData = data.data.filter((item) => item.id !== productId);
 
-      // Update the products in the local state
       setProducts(updatedData);
     } catch (error) {
       console.error('Erreur lors de la suppression du produit :', error);
@@ -60,12 +60,38 @@ const Admin = () => {
       name: newProductName,
     };
   
-    setProducts([newProduct, ...products]); // Modifié ici pour ajouter au début
+    setProducts([newProduct, ...products]); 
   
-    // Réinitialiser les champs de saisie pour le nouveau produit
     setNewProductCode("");
     setNewProductName("");
   };
+
+  const handleEdit = (productId) => {
+  if (editingRows.includes(productId)) {
+    // Disable editing
+    const newEditingRows = editingRows.filter(id => id !== productId);
+    setEditingRows(newEditingRows);
+
+    // Apply the edited values
+    const updatedData = products.map(item => {
+      if (item.id === productId && editedValues[productId]) {
+        return { ...item, ...editedValues[productId] };
+      }
+      return item;
+    });
+    setProducts(updatedData);
+
+    // Clear edited values
+    const newEditedValues = { ...editedValues };
+    delete newEditedValues[productId];
+    setEditedValues(newEditedValues);
+  } else {
+    // Enable editing
+    setEditingRows([...editingRows, productId]);
+  }
+};
+
+  
 
   const totalItems = products.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -129,27 +155,87 @@ const Admin = () => {
                   </td>
                 </tr>
                 {products.slice(startIndex, endIndex).map((item, index) => (
-                  <tr key={item.id} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                    <td className="w-1/12 border-2 text-center h-16 p-2"><input type="checkbox" /></td>
-                    <td className="w-1/4 border-2 text-left text-sm p-2">{item.code}</td>
-                    <td className="w-1/4 border-2 text-left text-sm p-2">{item.name}</td>
-                    <td className="w-1/4 border-2 text-left text-sm p-2">
-                      <button className="mr-4 text-blue-500 hover:text-blue-700">
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                      <button
-                        className="text-red-500 hover:text-red-700"
-                        onClick={() => {
-                          console.log('Selected Product ID:', item.id);
-                          setSelectedProduct(item.id);
-                          handleDelete(item.id);
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+  <tr key={item.id} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
+    <td className="w-1/12 border-2 text-center h-16 p-2"><input type="checkbox" /></td>
+    <td className="w-1/4 border-2 text-left text-sm p-2">
+      {editingRows.includes(item.id) ? (
+        <input
+          type="text"
+          value={editedValues[item.id]?.code || item.code}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            setEditedValues(prevValues => ({
+              ...prevValues,
+              [item.id]: { ...prevValues[item.id], code: newValue }
+            }));
+          }}
+        />
+      ) : (
+        item.code
+      )}
+    </td>
+    <td className="w-1/4 border-2 text-left text-sm p-2">
+      {editingRows.includes(item.id) ? (
+        <input
+          type="text"
+          value={editedValues[item.id]?.name || item.name}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            setEditedValues(prevValues => ({
+              ...prevValues,
+              [item.id]: { ...prevValues[item.id], name: newValue }
+            }));
+          }}
+        />
+      ) : (
+        item.name
+      )}
+    </td>
+    <td className="w-1/4 border-2 text-left text-sm p-2">
+      {editingRows.includes(item.id) ? (
+        <>
+          <button
+            className="mr-4 text-green-500 hover:text-green-700"
+            onClick={() => handleEdit(item.id)}
+          >
+            Save
+          </button>
+          <button
+            className="text-red-500 hover:text-red-700"
+            onClick={() => {
+              handleEdit(item.id); // Exit edit mode without saving changes
+              console.log('Selected Product ID:', item.id);
+              setSelectedProduct(item.id);
+              handleDelete(item.id);
+            }}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        </>
+      ) : (
+        <>
+          <button
+            className="mr-4 text-blue-500 hover:text-blue-700"
+            onClick={() => handleEdit(item.id)}
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </button>
+          <button
+            className="text-red-500 hover:text-red-700"
+            onClick={() => {
+              console.log('Selected Product ID:', item.id);
+              setSelectedProduct(item.id);
+              handleDelete(item.id);
+            }}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        </>
+      )}
+    </td>
+  </tr>
+))}
+
                 
               </tbody>
               <tfoot>
