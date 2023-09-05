@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 
 const SideNav = () => {
 
-
   return (
     <aside className="bg-custom-color h-screen w-1/5 p-4 flex flex-col">
       <div className="flex items-center mb-8">

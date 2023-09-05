@@ -1,31 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { faTag, faStar, faSearch, faList, faTh } from '@fortawesome/free-solid-svg-icons';
-import products from '../../assets/products.json';
 import { useDarkMode } from '../DarkMode/DarkModeContext';
 
+
 const MainContainer = () => {
-
+    // État local et initialisation
     const [currentPage, setCurrentPage] = useState(1);
+    const [sortKey, setSortKey] = useState('');
+    const [products, setProducts] = useState([]);
+     // État pour affichage en grille ou en liste
+    const [viewMode, setViewMode] = useState('grid');
+    const { isDarkMode, toggleDarkMode } = useDarkMode();
+
+    // *** Récupération des données depuis le fichier json ***
+    const getData = () => {
+        var requestOptions = {
+            method: "GET",
+            redirect: "follow",
+        };
+
+        fetch("./products.json", requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+                console.log('Received products:', result);
+                setProducts(result.data);
+            })
+            .catch((error) => console.error('Error fetching products:', error));
+    };
+ // Chargement initial des données
+    useEffect(() => {
+        getData();
+    }, []);
+
+    // Calcul des valeurs de pagination
     const itemsPerPage = 6;
-    const [sortKey, setSortKey] = useState(''); // Ajout de l'état pour la clé de tri
-
-    const totalItems = products.data.length;
+    const totalItems = products.length;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
-
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
-
     const startIndex = (currentPage - 1) * itemsPerPage + 1;
     const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
-    // Fonction de tri
+    // Fonction de tri des produits
     const sortProducts = (key) => {
         setSortKey(key);
     };
 
-    // Fonction pour trier les produits en fonction de la clé sélectionnée
-    const sortedProducts = [...products.data].sort((a, b) => {
+
+ // Tri des produits en fonction de la clé de tri sélectionnée
+    const sortedProducts = [...products].sort((a, b) => {
         if (sortKey === 'category') {
             return a.category.localeCompare(b.category);
         } else if (sortKey === 'inventoryStatus') {
@@ -37,37 +61,19 @@ const MainContainer = () => {
         }
     });
 
-
-    const [viewMode, setViewMode] = useState('grid'); // État pour le mode d'affichage
-
-    const { isDarkMode, toggleDarkMode } = useDarkMode();
-    // const [products, setProducts] = useState([]);
-
-    // useEffect(() => {
-    //   // Modifiez l'URL de l'API + modifier le map qui permet de boucler
-    //   axios.get('https://votre-api.com/products')
-    //     .then(response => {
-    //       setProducts(response.data);
-    //     })
-    //     .catch(error => {
-    //       console.error('Erreur lors de la récupération des produits :', error);
-    //     });
-    // }, []);
-
     return (
         <div className={`flex flex-col items-center justify-center pt-2 ${isDarkMode ? 'bg-slate-400' : 'bg-slate-200'}`}>
             <div className={`p-4 rounded-lg shadow-md w-3/4 mb-4 ${isDarkMode ? 'bg-slate-600' : 'bg-white'}`}>
                 <div className="flex items-center h-6">
                     <select
                         className="border rounded p-1"
-                        onChange={(e) => sortProducts(e.target.value)} // Appel de la fonction de tri
+                        onChange={(e) => sortProducts(e.target.value)}
                     >
                         <option value="">Sort By:</option>
                         <option value="category">Category</option>
                         <option value="inventoryStatus">Inventory Status</option>
                         <option value="rating">Rating</option>
                     </select>
-
                     <div className="relative ml-4">
                         <FontAwesomeIcon
                             icon={faSearch}
@@ -85,7 +91,6 @@ const MainContainer = () => {
                     >
                         <FontAwesomeIcon icon={viewMode === 'grid' ? faList : faTh} className="text-xl" />
                     </button>
-
                 </div>
                 <div className="border-b border-gray-300 my-4"></div>
                 <div className={`grid ${viewMode === 'grid' ? 'grid-cols-3 gap-4' : ''} w-full`}>
@@ -163,5 +168,4 @@ const MainContainer = () => {
         </div>
     );
 };
-
 export default MainContainer;
