@@ -1,7 +1,9 @@
 # **Altenshop**
 
 **Temps passé sur le projet :** 8 jours
+
 **Technos :** React + Tailwind + react-router-dom
+
 Un fichier "apiFunctions.js" est prêt pour faire des appels API
 
 <sub>OK :</sub>
